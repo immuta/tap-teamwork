@@ -2,11 +2,17 @@
 
 **Author**: Stephen Bailey (sbailey@immuta.com)
 
-This is a [Singer](http://singer.io) tap that produces JSON-formatted data following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/SPEC.md).
+This is a [Singer](http://singer.io) tap for [Teamwork.com](https://teamwork.com) that produces JSON-formatted data following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/SPEC.md).
 
 It can generate a catalog of available data in teamwork and extract the following resources:
 
-
+- Projects
+- Project updates
+- Project milestones
+- Project risks
+- Latest project activity
+- People
+- Tags
 
 ### Quick Start
 
@@ -18,7 +24,7 @@ cd tap-teamwork
 pip install .
 ```
 
-2. Get an [API key](https://teamwork.me/developers-api) from teamwork
+2. Get an API key from Teamwork's website.
 
 3. Create the config file.
 
@@ -44,4 +50,4 @@ tap-teamwork -c config.json --catalog catalog.json
 
 Would like to acknowledge the folks at Fishtown Analytics whose [`tap-framework`](https://github.com/fishtown-analytics/tap-framework) and [`tap-lever`](https://github.com/fishtown-analytics/tap-lever) packages formed the foundation for this package.
 
-Copyright &copy; 2019 Immuta
+Copyright &copy; 2020 Immuta
