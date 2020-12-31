@@ -1,5 +1,5 @@
 {
-  "api_key": "string",
-  "workspace": "string",
-  "start_date": "2020-04-01T00:00:00Z"
+  "api_key": "my_api_key",
+  "hostname": "https://company.teamwork.com",
+  "start_date": "2020-01-01T00:00:00Z"
 }
