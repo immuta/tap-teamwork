@@ -30,14 +30,16 @@ class BaseStream:
         self.substreams = []
 
     def get_url_base(self):
-        return "https://api.teamwork.me/api/v1"
+        if not self.config.hostname.startswith("http"):
+            return ValueError("Hostname config should begin with 'https://'.")
+        return self.config.hostname + "/projects/api/v3/"
 
     def get_url(self):
         base = self.get_url_base()
         return f"{base}{self.path}"
 
     def get_params(self, page=1):
-        return {"page-size": 100, "page": page}
+        return {"updatedAfter": None, "page": page, "pageSize": 1000}
 
     def get_class_path(self):
         return os.path.dirname(inspect.getfile(self.__class__))

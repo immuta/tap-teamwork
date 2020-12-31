@@ -4,7 +4,7 @@ import singer
 LOGGER = singer.get_logger()  # noqa
 
 
-class teamworkClient:
+class Client:
 
     MAX_TRIES = 5
 

@@ -97,15 +97,11 @@ env.sh
 config.json
 .autoenv.zsh
 
-rsa-key
-tags
-singer-check-tap-data
-state.json
-
 # Visual Studio Code
 .venv
 .vscode
 settings.json
+dev*
 
 # generated files
 catalog.json

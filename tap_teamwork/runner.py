@@ -8,7 +8,7 @@ from tap_teamwork.state import save_state
 LOGGER = singer.get_logger()
 
 
-class teamworkRunner:
+class Runner:
     def __init__(self, args, client, available_streams):
         self.available_streams = available_streams
         self.catalog = args.catalog
