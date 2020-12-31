@@ -107,7 +107,6 @@ class BaseStream:
         ]
 
     def transform_record(self, record):
-        LOGGER.info("passed in record is %s", record)
         with singer.Transformer() as tx:
             metadata = {}
 

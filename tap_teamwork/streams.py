@@ -52,7 +52,7 @@ class PeopleStream(BaseStream):
 
 class ProjectUpdatesStream(BaseStream):
     TABLE = "project_updates"
-    RESPONSE_KEY = "updates"
+    RESPONSE_KEY = "projectUpdates"
 
     CACHE_RESULTS = True
 
