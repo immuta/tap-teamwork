@@ -6,115 +6,127 @@ from tap_teamwork.base import BaseStream, TimeRangeByObjectStream
 LOGGER = singer.get_logger()
 
 
-class ClientStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "clients"
-    KEY_PROPERTIES = ["id"]
+class LatestActivityStream(BaseStream):
+    TABLE = "latest_activity"
+    RESPONSE_KEY= "activities"
 
     CACHE_RESULTS = True
 
     @property
     def path(self):
-        return f"/workspaces/{self.config['workspace']}/clients"
+        return f"latestactivity.json"
 
 
-class ProjectStream(BaseStream):
-    API_METHOD = "GET"
+class MilestonesStream(BaseStream):
+    TABLE = "milestones"
+    RESPONSE_KEY = "milestones"
+
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return "milestones.json"
+
+
+class ProjectsStream(BaseStream):
     TABLE = "projects"
-    KEY_PROPERTIES = ["id"]
+    RESPONSE_KEY = "projects"
+
+
+    @property
+    def path(self):
+        return f"projects.json"
+
+
+class PeopleStream(BaseStream):
+    TABLE = "people"
+    RESPONSE_KEY = "people"
 
     CACHE_RESULTS = True
 
     @property
     def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects"
+        return f"people.json"
 
 
-class TagStream(BaseStream):
-    API_METHOD = "GET"
+class ProjectUpdatesStream(BaseStream):
+    TABLE = "project_updates"
+    RESPONSE_KEY = "updates"
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return "projects/updates.json"
+
+class RisksStream(BaseStream):
+    TABLE = "risks"
+    RESPONSE_KEY = "risks"
+
+    CACHE_RESULTS = True
+
+    @property
+    def path(self):
+        return f"risks.json"
+
+class TagsStream(BaseStream):
     TABLE = "tags"
-    KEY_PROPERTIES = ["id"]
+    RESPONSE_KEY = "tags"
 
     CACHE_RESULTS = True
 
     @property
     def path(self):
-        return f"/workspaces/{self.config['workspace']}/tags"
+        return f"tags.json"
 
 
-class UserStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "users"
-    KEY_PROPERTIES = ["id"]
+# class TaskStream(TimeRangeByObjectStream):
+#     API_METHOD = "GET"
+#     TABLE = "tasks"
+#     KEY_PROPERTIES = ["id"]
+#     REPLACEMENT_STRING = "<VAR>"
 
-    CACHE_RESULTS = True
+#     CACHE_RESULTS = True
 
-    def get_params(self, page=1):
-        return {"page-size": 100, "page": page, "memberships": "ALL"}
+#     def get_object_list(self):
+#         url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/projects"
+#         api_method = "GET"
+#         params = {"page-size": 500}
+#         results = self.client.make_request(url, api_method, params=params)
+#         return [r["id"] for r in results]
 
-    @property
-    def path(self):
-        return f"/workspace/{self.config['workspace']}/users"
-
-
-class WorkspaceStream(BaseStream):
-    API_METHOD = "GET"
-    TABLE = "workspaces"
-    KEY_PROPERTIES = ["id"]
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "/workspaces"
+#     @property
+#     def path(self):
+#         return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
 
 
-class TaskStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "tasks"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
+# class TimeEntryStream(TimeRangeByObjectStream):
+#     API_METHOD = "GET"
+#     TABLE = "time_entries"
+#     KEY_PROPERTIES = ["id"]
+#     REPLACEMENT_STRING = "<VAR>"
 
-    CACHE_RESULTS = True
+#     CACHE_RESULTS = True
 
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/projects"
-        api_method = "GET"
-        params = {"page-size": 500}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
+#     def get_object_list(self):
+#         url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/users"
+#         api_method = "GET"
+#         params = {"page-size": 500, "memberships": "NONE"}
+#         results = self.client.make_request(url, api_method, params=params)
+#         return [r["id"] for r in results]
 
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/projects/<VAR>/tasks"
-
-
-class TimeEntryStream(TimeRangeByObjectStream):
-    API_METHOD = "GET"
-    TABLE = "time_entries"
-    KEY_PROPERTIES = ["id"]
-    REPLACEMENT_STRING = "<VAR>"
-
-    CACHE_RESULTS = True
-
-    def get_object_list(self):
-        url = self.get_url_base() + f"/workspaces/{self.config['workspace']}/users"
-        api_method = "GET"
-        params = {"page-size": 500, "memberships": "NONE"}
-        results = self.client.make_request(url, api_method, params=params)
-        return [r["id"] for r in results]
-
-    @property
-    def path(self):
-        return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
+#     @property
+#     def path(self):
+#         return f"/workspaces/{self.config['workspace']}/user/<VAR>/time-entries"
 
 
 AVAILABLE_STREAMS = [
-    ClientStream,
-    ProjectStream,
-    TagStream,
-    UserStream,
-    TaskStream,
-    TimeEntryStream,
-    WorkspaceStream,
+    LatestActivityStream,
+    ProjectsStream,
+    ProjectUpdatesStream,
+    PeopleStream,
+    MilestonesStream,
+    RisksStream,
+    TagsStream,
 ]

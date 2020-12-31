@@ -11,7 +11,9 @@ LOGGER = singer.get_logger()  # noqa
 
 @singer.utils.handle_top_exception(LOGGER)
 def main():
-    args = singer.utils.parse_args(required_config_keys=["api_key", "workspace"])
+    args = singer.utils.parse_args(
+        required_config_keys=["api_key", "hostname", "start_date"]
+    )
     client = Client(args.config)
     runner = Runner(args, client, AVAILABLE_STREAMS)
 

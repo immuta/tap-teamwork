@@ -27,13 +27,13 @@
             "type": "string"
         },
         "dueDate": {
-            "type": "null"
+            "type": ["string", "null"]
         },
         "forUserId": {
-            "type": "null"
+            "type": ["number", "null"]
         },
         "forUserName": {
-            "type": "null"
+            "type": ["null", "string"]
         },
         "isPrivate": {
             "type": "integer"

@@ -16,6 +16,7 @@ LOGGER = singer.get_logger()
 class BaseStream:
     # GLOBAL PROPERTIES
     TABLE = None
+    RESPONSE_KEY = None
     KEY_PROPERTIES = ["id"]
     API_METHOD = "GET"
     REQUIRES = []
@@ -30,9 +31,9 @@ class BaseStream:
         self.substreams = []
 
     def get_url_base(self):
-        if not self.config.hostname.startswith("http"):
+        if not self.config["hostname"].startswith("http"):
             return ValueError("Hostname config should begin with 'https://'.")
-        return self.config.hostname + "/projects/api/v3/"
+        return self.config["hostname"] + "/projects/api/v3/"
 
     def get_url(self):
         base = self.get_url_base()
@@ -106,6 +107,7 @@ class BaseStream:
         ]
 
     def transform_record(self, record):
+        LOGGER.info("passed in record is %s", record)
         with singer.Transformer() as tx:
             metadata = {}
 
@@ -162,7 +164,8 @@ class BaseStream:
         # Should iterate if number of results > page size
         while _next is not None:
             result = self.client.make_request(url, self.API_METHOD, params=params)
-            data = self.get_stream_data(result)
+            result_records = result.get(self.RESPONSE_KEY)
+            data = self.get_stream_data(result_records)
 
             with singer.metrics.record_counter(endpoint=table) as counter:
                 singer.write_records(table, data)
@@ -171,7 +174,7 @@ class BaseStream:
 
             LOGGER.info("Synced page %s for %s", page, self.TABLE)
             params["page"] = params["page"] + 1
-            if len(data) < params["page-size"]:
+            if len(data) < params["pageSize"]:
                 _next = None
         return all_resources
 
@@ -202,15 +205,14 @@ class TimeRangeByObjectStream(BaseStream):
     <projectId>.
     """
 
-    RANGE_FIELD = "start"
+    RANGE_FIELD = "updatedAfter"
     REPLACEMENT_STRING = "<VAR>"
 
     def get_params(self, start, end, page=1):
         return {
             self.RANGE_FIELD: start.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "end": end.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "page": 1,
-            "page-size": 250,
+            "pageSize": 250,
         }
 
     def get_object_list(self):
@@ -240,6 +242,7 @@ class TimeRangeByObjectStream(BaseStream):
             "Syncing data from %s to %s", start_date.isoformat(), end_date.isoformat()
         )
 
+        res = None
         for obj in object_list:
             params = self.get_params(start_date, end_date)
             url = self.get_url().replace(self.REPLACEMENT_STRING, obj)

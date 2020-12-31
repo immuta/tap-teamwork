@@ -14,13 +14,13 @@ class Client:
     def make_request(self, url, method, params=None, body=None):
         LOGGER.info("Making %s request to %s (%s)", method, url, params)
 
+        # Basic Auth requires API Key as user with any password string
+        auth = requests.auth.HTTPBasicAuth(self.config["api_key"], "xxx")
         response = requests.request(
             method,
             url,
-            headers={
-                "x-api-key": self.config["api_key"],
-                "Content-Type": "application/json",
-            },
+            headers={"Content-Type": "application/json"},
+            auth=auth,
             params=params,
             json=body,
         )

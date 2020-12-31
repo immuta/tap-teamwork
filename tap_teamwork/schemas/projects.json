@@ -25,36 +25,36 @@
           "type": "integer"
       },
       "tagIds": {
-          "type": "array",
+          "type": ["array", "null"],
           "additionalItems": true,
           "items": {
               "anyOf": [
                   {
-                      "type": "integer"
+                      "type": "string"
                   }
               ]
           }
       },
       "startDate": {
-          "type": "string"
+          "type": ["string", "null"]
       },
       "endDate": {
-          "type": "string"
+          "type": ["string", "null"]
       },
       "categoryId": {
-          "type": "null"
+          "type": ["number", "null"]
       },
       "ownerId": {
           "type": "integer"
       },
       "updateId": {
-          "type": "integer"
+          "type": ["integer", "null"]
       },
       "timeBudgetId": {
-          "type": "null"
+          "type": ["number", "null"]
       },
       "financialBudgetId": {
-          "type": "null"
+          "type": ["number", "null"]
       },
       "createdBy": {
           "type": "integer"
