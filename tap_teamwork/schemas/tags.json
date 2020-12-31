@@ -1,9 +1,19 @@
 {
-  "type": "object",
-  "properties": {
-    "id": {"type": "string"},
-    "name": {"type": "string"},
-    "workspaceId": {"type": "string"},
-    "archived": {"type": "boolean"}
-  }
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "projectId": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "color": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": true
 }

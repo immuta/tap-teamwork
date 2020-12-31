@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "description": "Stream at endpoint: projects/api/v3/people.json",
+  "type": "object",
+  "properties": {
+      "id": {
+          "type": "integer"
+      },
+      "firstName": {
+          "type": "string"
+      },
+      "lastName": {
+          "type": "string"
+      },
+      "title": {
+          "type": "string"
+      },
+      "email": {
+          "type": "string"
+      },
+      "companyId": {
+          "type": "integer"
+      },
+      "isAdmin": {
+          "type": "boolean"
+      },
+      "type": {
+          "type": "string"
+      },
+      "avatarUrl": {
+          "type": "string"
+      },
+      "lengthOfDay": {
+          "type": "integer"
+      },
+      "workingHoursId": {
+          "type": "integer"
+      }
+  },
+  "additionalProperties": true
+}

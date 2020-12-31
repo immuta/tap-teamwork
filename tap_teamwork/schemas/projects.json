@@ -1,31 +1,223 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "description": "Stream for Projects at endpoint: projects/api/v3/projects.json",
   "type": "object",
   "properties": {
-    "id": {"type": "string"},
-    "name": {"type": "string"},
-    "clientId": {"type": "string"},
-    "workspaceId": {"type": "string"},
-    "billable": {"type": "boolean"},
-    "archived": {"type": "boolean"},
-    "duration": {"type": "string"},
-    "clientName": {"type": "string"},
-    "note": {"type": "string"},
-    "template": {"type": "boolean"},
-    "public": {"type": "boolean"},
-    "color": {"type": "string"},
-    "estimate": {
-      "type": "object",
-      "properties": {
-        "estimate": {"type": "string"},
-        "type": {"type": "string"}
+      "id": {
+          "type": "integer"
+      },
+      "name": {
+          "type": "string"
+      },
+      "description": {
+          "type": "string"
+      },
+      "type": {
+          "type": "string"
+      },
+      "status": {
+          "type": "string"
+      },
+      "subStatus": {
+          "type": "string"
+      },
+      "companyId": {
+          "type": "integer"
+      },
+      "tagIds": {
+          "type": "array",
+          "additionalItems": true,
+          "items": {
+              "anyOf": [
+                  {
+                      "type": "integer"
+                  }
+              ]
+          }
+      },
+      "startDate": {
+          "type": "string"
+      },
+      "endDate": {
+          "type": "string"
+      },
+      "categoryId": {
+          "type": "null"
+      },
+      "ownerId": {
+          "type": "integer"
+      },
+      "updateId": {
+          "type": "integer"
+      },
+      "timeBudgetId": {
+          "type": "null"
+      },
+      "financialBudgetId": {
+          "type": "null"
+      },
+      "createdBy": {
+          "type": "integer"
+      },
+      "createdAt": {
+          "type": "string"
+      },
+      "updatedAt": {
+          "type": "string"
+      },
+      "updatedBy": {
+          "type": "integer"
+      },
+      "defaultPrivacy": {
+          "type": "string"
+      },
+      "activePages": {
+          "type": "object",
+          "properties": {
+              "billing": {
+                  "type": "boolean"
+              },
+              "comments": {
+                  "type": "boolean"
+              },
+              "files": {
+                  "type": "boolean"
+              },
+              "links": {
+                  "type": "boolean"
+              },
+              "messages": {
+                  "type": "boolean"
+              },
+              "milestones": {
+                  "type": "boolean"
+              },
+              "notebooks": {
+                  "type": "boolean"
+              },
+              "riskRegister": {
+                  "type": "boolean"
+              },
+              "tasks": {
+                  "type": "boolean"
+              },
+              "time": {
+                  "type": "boolean"
+              }
+          },
+          "additionalProperties": true
+      },
+      "directFileUploadsEnabled": {
+          "type": "boolean"
+      },
+      "harvestTimersEnabled": {
+          "type": "boolean"
+      },
+      "integrations": {
+          "type": "object",
+          "properties": {
+              "oneDriveBusiness": {
+                  "type": "object",
+                  "properties": {
+                      "account": {
+                          "type": "string"
+                      },
+                      "enabled": {
+                          "type": "boolean"
+                      },
+                      "folder": {
+                          "type": "string"
+                      },
+                      "folderName": {
+                          "type": "string"
+                      }
+                  },
+                  "additionalProperties": true
+              },
+              "sharepoint": {
+                  "type": "object",
+                  "properties": {
+                      "account": {
+                          "type": "string"
+                      },
+                      "enabled": {
+                          "type": "boolean"
+                      },
+                      "folder": {
+                          "type": "string"
+                      },
+                      "folderName": {
+                          "type": "string"
+                      }
+                  },
+                  "additionalProperties": true
+              },
+              "xero": {
+                  "type": "object",
+                  "properties": {
+                      "baseCurrency": {
+                          "type": "string"
+                      },
+                      "connected": {
+                          "type": "boolean"
+                      },
+                      "countryCode": {
+                          "type": "string"
+                      },
+                      "enabled": {
+                          "type": "boolean"
+                      },
+                      "organisation": {
+                          "type": "string"
+                      }
+                  },
+                  "additionalProperties": true
+              }
+          },
+          "additionalProperties": true
+      },
+      "isOnBoardingProject": {
+          "type": "boolean"
+      },
+      "isSampleProject": {
+          "type": "boolean"
+      },
+      "logo": {
+          "type": "string"
+      },
+      "notifyEveryone": {
+          "type": "boolean"
+      },
+      "notifyCommentIncludeCreator": {
+          "type": "boolean"
+      },
+      "overviewStartPage": {
+          "type": "string"
+      },
+      "privacyEnabled": {
+          "type": "boolean"
+      },
+      "projectOwnerId": {
+          "type": "integer"
+      },
+      "replyByEmailEnabled": {
+          "type": "boolean"
+      },
+      "showAnnouncement": {
+          "type": "boolean"
+      },
+      "skipWeekends": {
+          "type": "boolean"
+      },
+      "startPage": {
+          "type": "string"
+      },
+      "tasksStartPage": {
+          "type": "string"
+      },
+      "customFieldValueIds": {
+          "type": "null"
       }
-    },
-    "hourlyRate": {
-      "type": ["null", "object"],
-      "properties": {
-        "amount": {"type": "number"},
-        "currency": {"type": "string"}
-      }
-    }
-  }
+  },
+  "additionalProperties": true
 }

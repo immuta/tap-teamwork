@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "userId": {
+            "type": "integer"
+        },
+        "projectId": {
+            "type": "integer"
+        },
+        "companyId": {
+            "type": "integer"
+        },
+        "activityType": {
+            "type": "string"
+        },
+        "dateTime": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "extraDescription": {
+            "type": "string"
+        },
+        "dueDate": {
+            "type": "null"
+        },
+        "forUserId": {
+            "type": "null"
+        },
+        "forUserName": {
+            "type": "null"
+        },
+        "isPrivate": {
+            "type": "integer"
+        },
+        "itemId": {
+            "type": "integer"
+        },
+        "itemLink": {
+            "type": "string"
+        },
+        "latestActivityType": {
+            "type": "string"
+        },
+        "link": {
+            "type": "string"
+        },
+        "lockdownId": {
+            "type": "null"
+        },
+        "publicInfo": {
+            "type": "string"
+        },
+        "type": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": true
+}

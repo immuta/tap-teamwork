@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+      "id": {
+          "type": "integer"
+      },
+      "source": {
+          "type": "string"
+      },
+      "probability": {
+          "type": "string"
+      },
+      "probabilityValue": {
+          "type": "integer"
+      },
+      "impact": {
+          "type": "string"
+      },
+      "impactValue": {
+          "type": "integer"
+      },
+      "impactCost": {
+          "type": "boolean"
+      },
+      "impactSchedule": {
+          "type": "boolean"
+      },
+      "impactPerformance": {
+          "type": "boolean"
+      },
+      "createdOn": {
+          "type": "string"
+      },
+      "createdAt": {
+          "type": "string"
+      },
+      "createdByUserId": {
+          "type": "integer"
+      },
+      "createdBy": {
+          "type": "integer"
+      },
+      "lastChangedOn": {
+          "type": "string"
+      },
+      "updatedAt": {
+          "type": "string"
+      },
+      "lastChangedByUserId": {
+          "type": "integer"
+      },
+      "updatedBy": {
+          "type": "integer"
+      },
+      "result": {
+          "type": "integer"
+      },
+      "mitigationPlan": {
+          "type": "string"
+      },
+      "status": {
+          "type": "string"
+      },
+      "projectId": {
+          "type": "integer"
+      },
+      "deleted": {
+          "type": "boolean"
+      },
+      "canEdit": {
+          "type": "boolean"
+      }
+  },
+  "additionalProperties": true
+}

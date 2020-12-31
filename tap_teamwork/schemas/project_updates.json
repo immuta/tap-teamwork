@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "description": "Stream for Projects at endpoint: projects/api/v3/project_upudates.json",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "text": {
+            "type": "string"
+        },
+        "health": {
+            "type": "integer"
+        },
+        "color": {
+            "type": "string"
+        },
+        "createdAt": {
+            "type": "string"
+        },
+        "updatedAt": {
+            "type": "string"
+        },
+        "deleted": {
+            "type": "boolean"
+        },
+        "projectId": {
+            "type": "integer"
+        },
+        "createdBy": {
+            "type": "integer"
+        }
+    },
+    "additionalProperties": true
+}

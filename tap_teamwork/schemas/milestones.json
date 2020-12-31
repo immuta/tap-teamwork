@@ -1,0 +1,89 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "deadline": {
+            "type": "string"
+        },
+        "completed": {
+            "type": "boolean"
+        },
+        "projectId": {
+            "type": "integer"
+        },
+        "createdOn": {
+            "type": "string"
+        },
+        "lastChangedOn": {
+            "type": "string"
+        },
+        "creatorUserId": {
+            "type": "integer"
+        },
+        "createdBy": {
+            "type": "integer"
+        },
+        "reminder": {
+            "type": "boolean"
+        },
+        "private": {
+            "type": "boolean"
+        },
+        "status": {
+            "type": "string"
+        },
+        "completedOn": {
+            "type": "string"
+        },
+        "completerId": {
+            "type": "integer"
+        },
+        "userFollowingComments": {
+            "type": "boolean"
+        },
+        "userFollowingChanges": {
+            "type": "boolean"
+        },
+        "canEdit": {
+            "type": "boolean"
+        },
+        "canComplete": {
+            "type": "boolean"
+        },
+        "responsiblePartyIds": {
+            "type": "array",
+            "additionalItems": true,
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "integer"
+                    }
+                ]
+            }
+        },
+        "commentsCount": {
+            "type": "integer"
+        },
+        "tasklistIds": {
+            "type": "array",
+            "additionalItems": true,
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "integer"
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": true
+}
