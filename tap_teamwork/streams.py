@@ -15,6 +15,7 @@ class TeamworkStream(RESTStream):
     """Teamwork stream class."""
 
     response_result_key = None
+    _page_size = 250
 
     @property
     def http_headers(self) -> dict:
@@ -34,12 +35,8 @@ class TeamworkStream(RESTStream):
         return self.config["hostname"] + "/projects/api/v3/"
 
     def get_url_params(
-        self, partition: Optional[dict], next_page_token: Optional[Any] = 0
+        self, partition: Optional[dict], next_page_token: Optional[Any] = 1
     ) -> Dict[str, Any]:
-        """Return a dictionary of values to be used in URL parameterization.
-        If paging is supported, developers may override this method with specific paging
-        logic.
-        """
         params = {
             "updatedAfter": None,
             "page": next_page_token,
@@ -57,6 +54,21 @@ class TeamworkStream(RESTStream):
         else:
             for row in resp_json:
                 yield row
+
+    def get_next_page_token(
+        self,
+        response: requests.Response,
+        previous_token: Union[int, None],
+    ) -> Union[int, None]:
+
+        previous_token = previous_token or 0
+        data = response.json()
+        results = data.get(self.response_result_key, data)
+
+        if len(results) >= self._page_size:
+            return previous_token + 1
+
+        return None
 
 
 class CompaniesStream(TeamworkStream):
@@ -124,6 +136,7 @@ class ProjectCustomFieldsStream(TeamworkStream):
             "fields[customfields]": "[id,entity,name,description,type]",
         }
 
+    # TODO: Fix custom parsing logic
     # def sync_paginated(self, url, params):
     #     table = self.TABLE
     #     _next = True
@@ -194,7 +207,7 @@ class TasksStream(TeamworkStream):
         return {
             "updatedAfter": None,
             "page": next_page_token,
-            "pageSize": 250,
+            "pageSize": self._page_size,
             "includeCompletedTasks": True,
         }
 
@@ -215,5 +228,5 @@ class CategoriesStream(TeamworkStream):
         return {
             "updatedAfter": None,
             "page": next_page_token,
-            "pageSize": 250,
+            "pageSize": self._page_size,
         }
