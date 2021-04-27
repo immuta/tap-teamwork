@@ -40,7 +40,7 @@ class TeamworkStream(RESTStream):
         params = {
             "updatedAfter": None,
             "page": next_page_token,
-            "pageSize": self._page_size
+            "pageSize": self._page_size,
         }
         return params
 
@@ -108,7 +108,6 @@ class PeopleStream(TeamworkStream):
     schema_filepath = SCHEMAS_DIR / "people.json"
 
 
-
 class ProjectsStream(TeamworkStream):
     name = "projects"
     path = "projects.json"
@@ -130,41 +129,23 @@ class ProjectCustomFieldsStream(TeamworkStream):
     def get_url_params(self, partition, next_page_token=None):
         return {
             "includeArchivedProjects": True,
-            "page": next_page_token,
-            "pageSize": self._page_size,
-            "includeCustomFields": True,
             "fields[customfields]": "[id,entity,name,description,type]",
+            "includeCustomFields": True,
+            "includeArchiv" "page": next_page_token,
+            "pageSize": self._page_size,
         }
 
-    # TODO: Fix custom parsing logic
-    # def sync_paginated(self, url, params):
-    #     table = self.TABLE
-    #     _next = True
-    #     page = 1
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result rows."""
+        resp_json = response.json()
 
-    #     all_resources = []
-    #     while _next is not None:
-    #         result = self.client.make_request(url, self.API_METHOD, params=params)
-    #         custom_fields = result.get("included", {}).get("customfields", {})
-    #         raw_records = result.get("included", {}).get("customfieldProjects", {})
-    #         proc_records = []
-    #         for k, v in raw_records.items():
-    #             combined = {**v, **custom_fields[str(v.get("customfieldId"))]}
-    #             proc_records.append(combined)
+        # Extract custom fields
+        custom_fields = resp_json.get("included", {}).get("customfields", {})
+        raw_records = resp_json.get("included", {}).get("customfieldProjects", {})
 
-    #         data = self.get_stream_data(proc_records)
-
-    #         with singer.metrics.record_counter(endpoint=table) as counter:
-    #             singer.write_records(table, data)
-    #             counter.increment(len(data))
-    #             all_resources.extend(data)
-
-    #         LOGGER.info("Synced page %s for %s", page, self.TABLE)
-    #         params["page"] = params["page"] + 1
-    #         if len(data) < params.get("pageSize", 250):
-    #             _next = None
-    #     return all_resources
-
+        for k, v in raw_records.items():
+            merged = {**v, **custom_fields[str(v.get("customfieldId"))]}
+            yield merged
 
 
 class ProjectUpdatesStream(TeamworkStream):
