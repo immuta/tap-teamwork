@@ -2,6 +2,7 @@
 
 import requests
 
+from base64 import b64encode
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 from singer_sdk.streams import RESTStream
@@ -17,7 +18,15 @@ class TeamworkStream(RESTStream):
 
     @property
     def http_headers(self) -> dict:
-        return {"Authorization": self.config.get("api_key")}
+        "Implement Basic Auth with API Key as username and dummy password"
+        result = super().http_headers
+
+        api_key = self.config.get("api_key")
+        auth = b64encode(f"{api_key}:xxx".encode()).decode()
+
+        result["Authorization"] = f"Basic {auth}"
+
+        return result
 
     @property
     def url_base(self) -> str:
@@ -25,14 +34,17 @@ class TeamworkStream(RESTStream):
         return self.config["hostname"] + "/projects/api/v3/"
 
     def get_url_params(
-        self, partition: Optional[dict], next_page_token: Optional[Any] = None
+        self, partition: Optional[dict], next_page_token: Optional[Any] = 0
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization.
         If paging is supported, developers may override this method with specific paging
         logic.
         """
-        page = 0
-        params = {"updatedAfter": None, "page": page, "pageSize": 250}
+        params = {
+            "updatedAfter": None,
+            "page": next_page_token,
+            "pageSize": self._page_size
+        }
         return params
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
@@ -76,6 +88,15 @@ class MilestonesStream(TeamworkStream):
     schema_filepath = SCHEMAS_DIR / "milestones.json"
 
 
+class PeopleStream(TeamworkStream):
+    name = "people"
+    path = "people.json"
+    primary_keys = ["id"]
+    response_result_key = "people"
+    schema_filepath = SCHEMAS_DIR / "people.json"
+
+
+
 class ProjectsStream(TeamworkStream):
     name = "projects"
     path = "projects.json"
@@ -87,7 +108,7 @@ class ProjectsStream(TeamworkStream):
         return {"includeArchivedProjects": True}
 
 
-class ProjectsStream(TeamworkStream):
+class ProjectCustomFieldsStream(TeamworkStream):
     name = "project_custom_fields"
     path = "projects.json"
     primary_keys = ["id"]
@@ -131,13 +152,6 @@ class ProjectsStream(TeamworkStream):
     #             _next = None
     #     return all_resources
 
-
-class PeopleStream(TeamworkStream):
-    name = "people"
-    path = "people.json"
-    primary_keys = ["id"]
-    response_result_key = "people"
-    schema_filepath = SCHEMAS_DIR / "people.json"
 
 
 class ProjectUpdatesStream(TeamworkStream):
@@ -190,7 +204,7 @@ class CategoriesStream(TeamworkStream):
     path = "projectCategories.json"
     primary_keys = ["id"]
     response_result_key = "categories"
-    schema_filepath = SCHEMAS_DIR / "project_categories.json"
+    schema_filepath = SCHEMAS_DIR / "categories.json"
 
     @property
     def url_base(self) -> str:
