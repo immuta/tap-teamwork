@@ -117,7 +117,11 @@ class ProjectsStream(TeamworkStream):
     schema_filepath = SCHEMAS_DIR / "projects.json"
 
     def get_url_params(self, partition, next_page_token=None):
-        return {"includeArchivedProjects": True}
+        return {
+            "includeArchivedProjects": True,
+            "page": next_page_token,
+            "pageSize": self._page_size,
+        }
 
 
 class ProjectCustomFieldsStream(TeamworkStream):
@@ -132,7 +136,7 @@ class ProjectCustomFieldsStream(TeamworkStream):
             "includeArchivedProjects": True,
             "fields[customfields]": "[id,entity,name,description,type]",
             "includeCustomFields": True,
-            "includeArchiv" "page": next_page_token,
+            "page": next_page_token,
             "pageSize": self._page_size,
         }
 
