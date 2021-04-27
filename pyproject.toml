@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "tap-teamwork"
+version = "0.3.1"
+description = "Singer.io tap for Teamwork.com"
+authors = ["Stephen Bailey <stkbailey@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/immuta/tap-teamwork"
+keywords = [
+    "singer",
+    "elt",
+    "replication"
+]
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Database"
+]
+
+
+[tool.poetry.dependencies]
+python = "3.8"
+singer-sdk = "^0.1.3"
+
+[tool.poetry.dev-dependencies]
+black = "^21.4b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
