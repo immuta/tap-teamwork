@@ -95,6 +95,7 @@ class LatestActivityStream(TeamworkStream):
 class MilestonesStream(TeamworkStream):
     name = "milestones"
     path = "milestones.json"
+    response_result_key = "milestones"
     primary_keys = ["id"]
 
     schema_filepath = SCHEMAS_DIR / "milestones.json"
