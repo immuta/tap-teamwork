@@ -33,7 +33,7 @@ class BaseStream:
     def get_url_base(self):
         if not self.config["hostname"].startswith("http"):
             return ValueError("Hostname config should begin with 'https://'.")
-        return self.config["hostname"] + "/projects/api/v3/"
+        return self.config["hostname"]
 
     def get_url(self):
         base = self.get_url_base()

@@ -1,3 +1,2 @@
-singer-python>=5.9.0
-requests
+singer-sdk
 black

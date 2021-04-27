@@ -1,204 +1,205 @@
-import singer
+"""Stream class for tap-teamwork."""
 
-from tap_teamwork.base import BaseStream, TimeRangeByObjectStream
+import requests
+
+from pathlib import Path
+from typing import Any, Dict, Optional, Union, List, Iterable
+from singer_sdk.streams import RESTStream
 
 
-LOGGER = singer.get_logger()
+SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-class CompaniesStream(BaseStream):
-    TABLE = "companies"
-    RESPONSE_KEY = "companies"
+class TeamworkStream(RESTStream):
+    """Teamwork stream class."""
 
-    CACHE_RESULTS = True
+    response_result_key = None
 
     @property
-    def path(self):
-        return f"companies.json"
+    def http_headers(self) -> dict:
+        return {"Authorization": self.config.get("api_key")}
 
-    # The 'companies' endpoint is only in API version 1, so requires a different base
-    def get_url_base(self):
+    @property
+    def url_base(self) -> str:
+        """Return the API URL root, configurable via tap settings."""
+        return self.config["hostname"] + "/projects/api/v3/"
+
+    def get_url_params(
+        self, partition: Optional[dict], next_page_token: Optional[Any] = None
+    ) -> Dict[str, Any]:
+        """Return a dictionary of values to be used in URL parameterization.
+        If paging is supported, developers may override this method with specific paging
+        logic.
+        """
+        page = 0
+        params = {"updatedAfter": None, "page": page, "pageSize": 250}
+        return params
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result rows."""
+        resp_json = response.json()
+        if self.response_result_key:
+            resp_json = resp_json.get(self.response_result_key, {})
+        if isinstance(resp_json, dict):
+            yield resp_json
+        else:
+            for row in resp_json:
+                yield row
+
+
+class CompaniesStream(TeamworkStream):
+    name = "companies"
+    path = "/companies.json"
+    primary_keys = ["id"]
+    response_result_key = "companies"
+    schema_filepath = SCHEMAS_DIR / "companies.json"
+
+    @property
+    def url_base(self) -> str:
+        """The 'companies' endpoint is only in API version 1, so requires a different base"""
         return self.config["hostname"] + "/"
 
 
-class LatestActivityStream(BaseStream):
-    TABLE = "latest_activity"
-    RESPONSE_KEY = "activities"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"latestactivity.json"
+class LatestActivityStream(TeamworkStream):
+    name = "latest_activity"
+    path = "latestactivity.json"
+    primary_keys = ["id"]
+    response_result_key = "activities"
+    schema_filepath = SCHEMAS_DIR / "latest_activity.json"
 
 
-class MilestonesStream(BaseStream):
-    TABLE = "milestones"
-    RESPONSE_KEY = "milestones"
+class MilestonesStream(TeamworkStream):
+    name = "milestones"
+    path = "milestones.json"
+    primary_keys = ["id"]
 
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "milestones.json"
+    schema_filepath = SCHEMAS_DIR / "milestones.json"
 
 
-class ProjectsStream(BaseStream):
-    TABLE = "projects"
-    RESPONSE_KEY = "projects"
+class ProjectsStream(TeamworkStream):
+    name = "projects"
+    path = "projects.json"
+    primary_keys = ["id"]
+    response_result_key = "projects"
+    schema_filepath = SCHEMAS_DIR / "projects.json"
 
-    @property
-    def path(self):
-        return f"projects.json"
+    def get_url_params(self, partition, next_page_token=None):
+        return {"includeArchivedProjects": True}
 
 
-class ProjectCustomFieldsStream(BaseStream):
-    TABLE = "project_custom_fields"
-    RESPONSE_KEY = "included"
+class ProjectsStream(TeamworkStream):
+    name = "project_custom_fields"
+    path = "projects.json"
+    primary_keys = ["id"]
+    response_result_key = "included"
+    schema_filepath = SCHEMAS_DIR / "project_custom_fields.json"
 
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "projects.json"
-
-    def get_params(self, page=1):
+    def get_url_params(self, partition, next_page_token=None):
         return {
-            "updatedAfter": None,
-            "page": page,
-            "pageSize": 250,
+            "includeArchivedProjects": True,
+            "page": next_page_token,
+            "pageSize": self._page_size,
             "includeCustomFields": True,
-            "fields[customfields]": '[id,entity,name,description,type]'
+            "fields[customfields]": "[id,entity,name,description,type]",
         }
 
-    def sync_paginated(self, url, params):
-        table = self.TABLE
-        _next = True
-        page = 1
+    # def sync_paginated(self, url, params):
+    #     table = self.TABLE
+    #     _next = True
+    #     page = 1
 
-        all_resources = []
-        while _next is not None:
-            result = self.client.make_request(url, self.API_METHOD, params=params)
-            custom_fields = result.get("included", {}).get("customfields", {})
-            raw_records = result.get("included", {}).get("customfieldProjects", {})
-            proc_records = []
-            for k, v in raw_records.items():
-                combined = {**v, **custom_fields[str(v.get("customfieldId"))]}
-                proc_records.append(combined)
+    #     all_resources = []
+    #     while _next is not None:
+    #         result = self.client.make_request(url, self.API_METHOD, params=params)
+    #         custom_fields = result.get("included", {}).get("customfields", {})
+    #         raw_records = result.get("included", {}).get("customfieldProjects", {})
+    #         proc_records = []
+    #         for k, v in raw_records.items():
+    #             combined = {**v, **custom_fields[str(v.get("customfieldId"))]}
+    #             proc_records.append(combined)
 
-            data = self.get_stream_data(proc_records)
+    #         data = self.get_stream_data(proc_records)
 
-            with singer.metrics.record_counter(endpoint=table) as counter:
-                singer.write_records(table, data)
-                counter.increment(len(data))
-                all_resources.extend(data)
+    #         with singer.metrics.record_counter(endpoint=table) as counter:
+    #             singer.write_records(table, data)
+    #             counter.increment(len(data))
+    #             all_resources.extend(data)
 
-            LOGGER.info("Synced page %s for %s", page, self.TABLE)
-            params["page"] = params["page"] + 1
-            if len(data) < params.get("pageSize", 250):
-                _next = None
-        return all_resources
-
-
-class PeopleStream(BaseStream):
-    TABLE = "people"
-    RESPONSE_KEY = "people"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"people.json"
+    #         LOGGER.info("Synced page %s for %s", page, self.TABLE)
+    #         params["page"] = params["page"] + 1
+    #         if len(data) < params.get("pageSize", 250):
+    #             _next = None
+    #     return all_resources
 
 
-class ProjectUpdatesStream(BaseStream):
-    TABLE = "project_updates"
-    RESPONSE_KEY = "projectUpdates"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return "projects/updates.json"
+class PeopleStream(TeamworkStream):
+    name = "people"
+    path = "people.json"
+    primary_keys = ["id"]
+    response_result_key = "people"
+    schema_filepath = SCHEMAS_DIR / "people.json"
 
 
-class RisksStream(BaseStream):
-    TABLE = "risks"
-    RESPONSE_KEY = "risks"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"risks.json"
+class ProjectUpdatesStream(TeamworkStream):
+    name = "project_updates"
+    path = "projects/updates.json"
+    primary_keys = ["id"]
+    response_result_key = "projectUpdates"
+    schema_filepath = SCHEMAS_DIR / "project_updates.json"
 
 
-class TagsStream(BaseStream):
-    TABLE = "tags"
-    RESPONSE_KEY = "tags"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"tags.json"
+class RisksStream(TeamworkStream):
+    name = "risks"
+    path = "risks.json"
+    primary_keys = ["id"]
+    response_result_key = "risks"
+    schema_filepath = SCHEMAS_DIR / "risks.json"
 
 
-class TasksStream(BaseStream):
-    TABLE = "tasks"
-    RESPONSE_KEY = "todo-items"
+class TagsStream(TeamworkStream):
+    name = "tags"
+    path = "tags.json"
+    primary_keys = ["id"]
+    response_result_key = "tags"
+    schema_filepath = SCHEMAS_DIR / "tags.json"
 
-    CACHE_RESULTS = True
+
+class TasksStream(TeamworkStream):
+    name = "tasks"
+    path = "tasks.json"
+    primary_keys = ["id"]
+    response_result_key = "todo-items"
+    schema_filepath = SCHEMAS_DIR / "tasks.json"
 
     @property
-    def path(self):
-        return f"tasks.json"
-
-    def get_params(self, page=1):
-        return {
-            "updatedAfter": None,
-            "page": page,
-            "pageSize": 250,
-            "includeCompletedTasks": True
-        }
-
-    # The 'tasks' endpoint is only in API version 1, so requires a different base
-    def get_url_base(self):
+    def url_base(self) -> str:
+        """The 'tasks' endpoint is only in API version 1, so requires a different base"""
         return self.config["hostname"] + "/"
 
-
-class CategoriesStream(BaseStream):
-    TABLE = "categories"
-    RESPONSE_KEY = "categories"
-
-    CACHE_RESULTS = True
-
-    @property
-    def path(self):
-        return f"projectCategories.json"
-
-    def get_params(self, page=1):
+    def get_url_params(self, partition, next_page_token=None):
         return {
             "updatedAfter": None,
-            "page": page,
+            "page": next_page_token,
             "pageSize": 250,
+            "includeCompletedTasks": True,
         }
 
-    # The 'tasks' endpoint is only in API version 1, so requires a different base
-    def get_url_base(self):
+
+class CategoriesStream(TeamworkStream):
+    name = "categories"
+    path = "projectCategories.json"
+    primary_keys = ["id"]
+    response_result_key = "categories"
+    schema_filepath = SCHEMAS_DIR / "project_categories.json"
+
+    @property
+    def url_base(self) -> str:
+        """The 'catgories' endpoint is only in API version 1, so requires a different base"""
         return self.config["hostname"] + "/"
 
-
-AVAILABLE_STREAMS = [
-    CategoriesStream,
-    CompaniesStream,
-    LatestActivityStream,
-    ProjectsStream,
-    ProjectCustomFieldsStream,
-    ProjectUpdatesStream,
-    PeopleStream,
-    MilestonesStream,
-    RisksStream,
-    TagsStream,
-    TasksStream,
-]
+    def get_url_params(self, partition, next_page_token=None):
+        return {
+            "updatedAfter": None,
+            "page": next_page_token,
+            "pageSize": 250,
+        }

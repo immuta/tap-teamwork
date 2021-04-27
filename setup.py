@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name="tap-teamwork",
-    version="0.2.2",
+    version="0.3.0",
     description="Singer.io tap for extracting data",
     author="Stephen Bailey",
     url="http://singer.io",
@@ -13,8 +13,8 @@ setuptools.setup(
     package_data={"schemas": ["tap_teamwork/schemas/*.json"]},
     entry_points="""
         [console_scripts]
-        tap-teamwork=tap_teamwork:main
+        tap-teamwork=tap_teamwork.tap:cli
     """,
-    install_requires=["singer-python", "requests"],
+    install_requires=["singer-sdk"],
     include_package_data=True,
 )
